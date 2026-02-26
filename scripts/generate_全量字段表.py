@@ -229,7 +229,7 @@ def extract_ai_config(field_def, field_map):
     form_data = config.get('formData', {})
     
     # 提取提示词（多种可能的字段名）
-    prompt_text = ['模拟一段特殊的列表格式数据', '模拟另一段']  # 豆包图片理解
+    prompt_text = form_data.get('promptEdit', '')  # 豆包图片理解
     if not prompt_text:
         prompt_text = form_data.get('content', '')  # 其他 AI
     if not prompt_text:
@@ -253,6 +253,13 @@ def extract_ai_config(field_def, field_map):
     if source_field:
         desc_parts.append(f"来源字段: 「{source_field}」")
     if prompt_text:
+        # 兼容 prompt_text 类型可能为列表的情况，防止没有 replace 属性报错
+        if isinstance(prompt_text, list):
+            prompt_text = " ".join([str(i) for i in prompt_text])
+        else:
+            # 确保转为字符串，防止其他非字符串类型引发 replace 报错
+            prompt_text = str(prompt_text)
+            
         # 截取提示词，避免过长
         prompt_preview = prompt_text[:200].replace('\n', ' ')
         if len(prompt_text) > 200:

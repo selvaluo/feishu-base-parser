@@ -19,3 +19,6 @@ temp/
 
 # Temp docs
 docs_temp/
+
+# Generated documentation in scripts
+scripts/*.md

@@ -15,9 +15,24 @@ import gzip
 import io
 from collections import defaultdict
 
+import glob
+import sys
+import os
+
 # ========== 配置 ==========
-FILE_PATH = "【演示】成品布管理系统.base"
 OUTPUT_PATH = "完整性校验报告.md"
+
+def find_base_file():
+    """在当前目录下查找 .base 文件"""
+    base_files = glob.glob("*.base")
+    if not base_files:
+        print("❌ 错误：当前目录下未找到 .base 文件，请先导出并上传您的飞书多维表格 .base 文件到本目录。")
+        sys.exit(1)
+    elif len(base_files) > 1:
+        print(f"❌ 错误：当前目录下找到多个 .base 文件 {base_files}，请仅保留一个需要解析的文件。")
+        sys.exit(1)
+    
+    return base_files[0]
 
 # 已知的、已被解析器处理的字段（根据 generate_自动化地图.py 的逻辑）
 KNOWN_STEP_KEYS = {
@@ -85,6 +100,7 @@ def main():
     print("=" * 50)
     
     # 读取文件
+    FILE_PATH = find_base_file()
     print(f"\n[1/4] 读取文件: {FILE_PATH}")
     try:
         with open(FILE_PATH, 'r', encoding='utf-8') as f:

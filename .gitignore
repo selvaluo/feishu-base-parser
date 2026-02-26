@@ -13,3 +13,9 @@ __pycache__/
 # Temp files
 *.tmp
 temp/
+
+# Feishu 
+*.base
+
+# Temp docs
+docs_temp/

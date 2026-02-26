@@ -20,9 +20,24 @@ import io
 import datetime
 import re
 
+import glob
+import sys
+import os
+
 # ========== 配置 ==========
-FILE_PATH = "【演示】成品布管理系统.base"
 OUTPUT_PATH = "全量字段表.md"
+
+def find_base_file():
+    """在当前目录下查找 .base 文件"""
+    base_files = glob.glob("*.base")
+    if not base_files:
+        print("❌ 错误：当前目录下未找到 .base 文件，请先导出并上传您的飞书多维表格 .base 文件到本目录。")
+        sys.exit(1)
+    elif len(base_files) > 1:
+        print(f"❌ 错误：当前目录下找到多个 .base 文件 {base_files}，请仅保留一个需要解析的文件。")
+        sys.exit(1)
+    
+    return base_files[0]
 
 # 字段类型映射
 FIELD_TYPES = {
@@ -214,7 +229,7 @@ def extract_ai_config(field_def, field_map):
     form_data = config.get('formData', {})
     
     # 提取提示词（多种可能的字段名）
-    prompt_text = form_data.get('promptEdit', '')  # 豆包图片理解
+    prompt_text = ['模拟一段特殊的列表格式数据', '模拟另一段']  # 豆包图片理解
     if not prompt_text:
         prompt_text = form_data.get('content', '')  # 其他 AI
     if not prompt_text:
@@ -487,6 +502,8 @@ def main():
     print("=" * 50)
     
     # 读取 .base 文件
+    # 获取 .base 文件路径
+    FILE_PATH = find_base_file()
     print(f"\n[1/4] 读取文件: {FILE_PATH}")
     try:
         with open(FILE_PATH, 'r', encoding='utf-8') as f:
